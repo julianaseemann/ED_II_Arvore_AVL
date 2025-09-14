@@ -1,0 +1,37 @@
+função inserirAVL(raiz, valor):
+    se raiz é nula:
+        criar novo nó com valor
+        retornar nó
+
+    se valor < raiz.valor:
+        raiz.esquerda = inserirAVL(raiz.esquerda, valor)
+    senão se valor > raiz.valor:
+        raiz.direita = inserirAVL(raiz.direita, valor)
+    senão:
+        retornar raiz  // valores iguais não são inseridos
+
+    // Atualizar altura do nó
+    raiz.altura = 1 + max(altura(raiz.esquerda), altura(raiz.direita))
+
+    // Calcular fator de balanceamento
+    fb = altura(raiz.esquerda) - altura(raiz.direita)
+
+    // Caso 1: Rotação à direita (LL)
+    se fb > 1 e valor < raiz.esquerda.valor:
+        retornar rotacaoDireita(raiz)
+
+    // Caso 2: Rotação à esquerda (RR)
+    se fb < -1 e valor > raiz.direita.valor:
+        retornar rotacaoEsquerda(raiz)
+
+    // Caso 3: Rotação dupla esquerda-direita (LR)
+    se fb > 1 e valor > raiz.esquerda.valor:
+        raiz.esquerda = rotacaoEsquerda(raiz.esquerda)
+        retornar rotacaoDireita(raiz)
+
+    // Caso 4: Rotação dupla direita-esquerda (RL)
+    se fb < -1 e valor < raiz.direita.valor:
+        raiz.direita = rotacaoDireita(raiz.direita)
+        retornar rotacaoEsquerda(raiz)
+
+    retornar raiz
