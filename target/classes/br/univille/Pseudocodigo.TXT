@@ -1,37 +1,38 @@
-função inserirAVL(raiz, valor):
-    se raiz é nula:
-        criar novo nó com valor
-        retornar nó
+se valor < noAtual.valor:
+    noAtual.esq = inserirRec(noAtual.esq, valor)
+senão se valor > noAtual.valor:
+    noAtual.dir = inserirRec(noAtual.dir, valor)
+senão:
+    // valores iguais: opcionalmente ignorar ou tratar
+    retornar noAtual
 
-    se valor < raiz.valor:
-        raiz.esquerda = inserirAVL(raiz.esquerda, valor)
-    senão se valor > raiz.valor:
-        raiz.direita = inserirAVL(raiz.direita, valor)
-    senão:
-        retornar raiz  // valores iguais não são inseridos
+// 1) atualiza altura
+noAtual.altura = 1 + max(altura(noAtual.esq), altura(noAtual.dir))
 
-    // Atualizar altura do nó
-    raiz.altura = 1 + max(altura(raiz.esquerda), altura(raiz.direita))
+// 2) calcula fator de balanceamento
+fb = fatorBalanceamento(noAtual)
 
-    // Calcular fator de balanceamento
-    fb = altura(raiz.esquerda) - altura(raiz.direita)
+// 3) casos de rotação
 
-    // Caso 1: Rotação à direita (LL)
-    se fb > 1 e valor < raiz.esquerda.valor:
-        retornar rotacaoDireita(raiz)
+// Caso LL: fb > 1 e valor < noAtual.esq.valor
+se fb > 1 e valor < noAtual.esq.valor:
+    retornar rotacaoDireita(noAtual)
 
-    // Caso 2: Rotação à esquerda (RR)
-    se fb < -1 e valor > raiz.direita.valor:
-        retornar rotacaoEsquerda(raiz)
+// Caso RR: fb < -1 e valor > noAtual.dir.valor
+se fb < -1 e valor > noAtual.dir.valor:
+    retornar rotacaoEsquerda(noAtual)
 
-    // Caso 3: Rotação dupla esquerda-direita (LR)
-    se fb > 1 e valor > raiz.esquerda.valor:
-        raiz.esquerda = rotacaoEsquerda(raiz.esquerda)
-        retornar rotacaoDireita(raiz)
+// Caso LR: fb > 1 e valor > noAtual.esq.valor
+se fb > 1 e valor > noAtual.esq.valor:
+    noAtual.esq = rotacaoEsquerda(noAtual.esq)
+    retornar rotacaoDireita(noAtual)
 
-    // Caso 4: Rotação dupla direita-esquerda (RL)
-    se fb < -1 e valor < raiz.direita.valor:
-        raiz.direita = rotacaoDireita(raiz.direita)
-        retornar rotacaoEsquerda(raiz)
+// Caso RL: fb < -1 e valor < noAtual.dir.valor
+se fb < -1 e valor < noAtual.dir.valor:
+    noAtual.dir = rotacaoDireita(noAtual.dir)
+    retornar rotacaoEsquerda(noAtual)
 
-    retornar raiz
+retornar noAtual
+rotacaoDireita(y): x = y.esq T2 = x.dir // Rotaciona x.dir = y y.esq = T2 // Atualiza alturas y.altura = 1 + max(altura(y.esq), altura(y.dir)) x.altura = 1 + max(altura(x.esq), altura(x.dir)) retornar x
+
+rotacaoEsquerda(x): y = x.dir T2 = y.esq // Rotaciona y.esq = x x.dir = T2 // Atualiza alturas x.altura = 1 + max(altura(x.esq), altura(x.dir)) y.altura = 1 + max(altura(y.esq), altura(y.dir)) retornar y

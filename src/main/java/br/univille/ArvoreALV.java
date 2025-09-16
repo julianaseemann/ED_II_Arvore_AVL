@@ -1,5 +1,8 @@
 package br.univille;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class ArvoreALV {
     No raiz;
 
@@ -32,23 +35,17 @@ public class ArvoreALV {
     private No balancear(No noAtual, int valor) {
         int fatorBalanceamento = noAtual.calcularFatorBalanceamento();
 
-        // Caso LL (rotação simples à direita)
-        if (fatorBalanceamento > 1 && valor < noAtual.filhoEsquerdo.valor) {
+        if (fatorBalanceamento > 1 && valor < noAtual.filhoEsquerdo.valor)
             return rotacaoDireita(noAtual);
-        }
 
-        // Caso RR (rotação simples à esquerda)
-        if (fatorBalanceamento < -1 && valor > noAtual.filhoDireito.valor) {
+        if (fatorBalanceamento < -1 && valor > noAtual.filhoDireito.valor)
             return rotacaoEsquerda(noAtual);
-        }
 
-        // Caso LR (rotação dupla esquerda-direita)
         if (fatorBalanceamento > 1 && valor > noAtual.filhoEsquerdo.valor) {
             noAtual.filhoEsquerdo = rotacaoEsquerda(noAtual.filhoEsquerdo);
             return rotacaoDireita(noAtual);
         }
 
-        // Caso RL (rotação dupla direita-esquerda)
         if (fatorBalanceamento < -1 && valor < noAtual.filhoDireito.valor) {
             noAtual.filhoDireito = rotacaoDireita(noAtual.filhoDireito);
             return rotacaoEsquerda(noAtual);
@@ -61,56 +58,61 @@ public class ArvoreALV {
         No filhoEsquerdo = noDesbalanceado.filhoEsquerdo;
         No subArvoreDireitaDoFilho = filhoEsquerdo.filhoDireito;
 
-        // Rotação
         filhoEsquerdo.filhoDireito = noDesbalanceado;
         noDesbalanceado.filhoEsquerdo = subArvoreDireitaDoFilho;
 
-        // Ajusta pais
         if (subArvoreDireitaDoFilho != null)
             subArvoreDireitaDoFilho.pai = noDesbalanceado;
 
         filhoEsquerdo.pai = noDesbalanceado.pai;
         noDesbalanceado.pai = filhoEsquerdo;
 
-        // Recalcula alturas
         noDesbalanceado.calcularAltura();
         filhoEsquerdo.calcularAltura();
 
-        return filhoEsquerdo; // nova raiz da subárvore
+        return filhoEsquerdo;
     }
 
     private No rotacaoEsquerda(No noDesbalanceado) {
         No filhoDireito = noDesbalanceado.filhoDireito;
         No subArvoreEsquerdaDoFilho = filhoDireito.filhoEsquerdo;
 
-        // Rotação
         filhoDireito.filhoEsquerdo = noDesbalanceado;
         noDesbalanceado.filhoDireito = subArvoreEsquerdaDoFilho;
 
-        // Ajusta pais
         if (subArvoreEsquerdaDoFilho != null)
             subArvoreEsquerdaDoFilho.pai = noDesbalanceado;
 
         filhoDireito.pai = noDesbalanceado.pai;
         noDesbalanceado.pai = filhoDireito;
 
-        // Recalcula alturas
         noDesbalanceado.calcularAltura();
         filhoDireito.calcularAltura();
 
-        return filhoDireito; // nova raiz da subárvore
+        return filhoDireito;
     }
 
-    public void imprimirEmOrdem(No noAtual) {
-        if (noAtual != null) {
-            imprimirEmOrdem(noAtual.filhoEsquerdo);
-            System.out.print(noAtual.valor + " ");
-            imprimirEmOrdem(noAtual.filhoDireito);
+    public void imprimirNivelPorNivel() {
+        if (raiz == null) {
+            System.out.println("(árvore vazia)");
+            return;
         }
-    }
 
-    public void imprimirArvore() {
-        imprimirEmOrdem(raiz);
-        System.out.println();
+        Queue<No> fila = new LinkedList<>();
+        fila.add(raiz);
+
+        while (!fila.isEmpty()) {
+            int tamanhoNivel = fila.size();
+
+            for (int i = 0; i < tamanhoNivel; i++) {
+                No atual = fila.poll();
+                System.out.print(atual.valor + " ");
+
+                if (atual.filhoEsquerdo != null) fila.add(atual.filhoEsquerdo);
+                if (atual.filhoDireito != null) fila.add(atual.filhoDireito);
+            }
+
+            System.out.println(); // nova linha a cada nível
+        }
     }
 }
